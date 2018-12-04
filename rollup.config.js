@@ -2,12 +2,30 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import pkg from './package.json';
 import babel from 'rollup-plugin-babel';
+import scss from 'rollup-plugin-scss';
 import { eslint } from 'rollup-plugin-eslint';
 
 export default [
+  {
+    input: 'src/styles/chromecast.scss',
+    external: [],
+    output: {
+      name: 'overlays',
+      file: pkg.browser,
+      format: 'umd',
+    },
+    plugins: [
+      scss({
+        // Filename to write all styles
+        output: 'dist/chromecast-overlay.css',
+        exclude: 'node_modules/**'
+      })
+    ],
+  },
+
   // browser-friendly UMD build
   {
-    input: 'src/main.js',
+    input: 'src/js/main.js',
     output: {
       name: 'overlays',
       file: pkg.browser,
@@ -18,12 +36,12 @@ export default [
       commonjs(),
       eslint({
         exclude: [
-          'src/styles/**',
+          'src/styles/**'
         ]
       }),
       babel({
-        exclude: 'node_modules/**',
-      }),
+        exclude: 'node_modules/**'
+      })
     ],
   },
 
@@ -34,11 +52,11 @@ export default [
   // an array for the `output` option, where we can specify
   // `file` and `format` for each target)
   {
-    input: 'src/main.js',
+    input: 'src/js/main.js',
     external: [],
     output: [
       { file: pkg.main, format: 'cjs' },
       { file: pkg.module, format: 'es' },
     ],
-  },
+  }
 ];
