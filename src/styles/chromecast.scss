@@ -66,10 +66,22 @@
     transform: translateY(-50%);
   }
 
+  .chromecast-overlay-all {
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+
   .chromecast-overlay-center {
     left: $middle;
     margin-left: $offset-h;
     top: $middle;
     transform: translateY(-50%);
   }
+
+  .chromecast-hidden {
+    display: none;
+  }
+
 }
