@@ -5,6 +5,7 @@
     },
     "extends": "eslint:recommended",
     "globals": {
+      "module": false,
       "cast" : false,
       "describe": false,
       "it": false,
