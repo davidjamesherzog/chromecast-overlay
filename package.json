@@ -27,7 +27,8 @@
     "build": "rollup -c",
     "watch": "rollup -c -w",
     "test": "jest",
-    "clean": "rm -rf ./dist"
+    "coverage": "jest --collectCoverage=true",
+    "clean": "rm -rf ./dist && rm -rf ./coverage"
   },
   "renovate": {
     "extends": [

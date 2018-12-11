@@ -2,7 +2,6 @@ import {isNumber, hasNoWhitespace} from './utils';
 
 describe('utils', () => {
 
-
   describe('isNumber', () => {
 
     test('should be a number', () => {
@@ -32,6 +31,5 @@ describe('utils', () => {
     });
 
   });
-
 
 });
