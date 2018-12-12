@@ -27,7 +27,7 @@ export default function overlays(config) {
   const playerManager = context.getPlayerManager();
 
   const overlays_ = overlays.map(o => {
-    const config = Object.assign(settings, o);
+    const config = Object.assign({}, settings, o);
     const overlay = new Overlay(playerManager, config);
     overlay.createEl();
 

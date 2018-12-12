@@ -54,16 +54,12 @@ class Overlay {
     this.el_.className =  `chromecast-overlay chromecast-overlay-${options.align} ${options.class} ${background} chromecast-hidden`;
 
     if (options.id) {
-      window.console.log('id exists');
       this.el_.appendChild(document.getElementById(options.id));
     } else if (typeof content === 'string') {
-      window.console.log('content is a string');
       this.el_.innerHTML = content;
     } else if (content instanceof window.DocumentFragment) {
-      window.console.log('content is fragment');
       this.el_.appendChild(content);
     } else {
-      window.console.log('content is something else');
       document.appendContent(this.el_, content);
     }
 
@@ -72,8 +68,6 @@ class Overlay {
       this.options_.onReady();
     }
 
-    // do we need to return?
-    //return this.el_;
   }
 
   el() {
