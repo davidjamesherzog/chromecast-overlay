@@ -1,6 +1,6 @@
 {
   "name": "chromecast-overlay",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "main": "dist/chromecast-overlay.cjs.js",
   "module": "dist/chromecast-overlay.esm.js",
   "browser": "dist/chromecast-overlay.umd.js",
@@ -29,16 +29,6 @@
     "test": "jest",
     "coverage": "jest --collectCoverage=true",
     "clean": "rm -rf ./dist && rm -rf ./coverage"
-  },
-  "renovate": {
-    "extends": [
-      "config:js-lib"
-    ],
-    "automerge": true,
-    "major": {
-      "automerge": false
-    },
-    "automergeType": "branch"
   },
   "files": [
     "dist"
