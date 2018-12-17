@@ -31,9 +31,19 @@ Maintenance Status: Stable
 Once you've added the plugin script to your page, you can use it with any video:
 
 ```html
-<script src="path/to/videojs-overlay.js"></script>
+<script src="path/to/chromecast-overlay.umd.js"></script>
 <script>
-  coming soon...
+  overlays({
+    debug: true,
+    overlays: [
+      {
+        id: 'pause-info',
+        start: cast.framework.messages.MessageType.PAUSE,
+        end: cast.framework.messages.MessageType.PLAY,
+        align: 'top-left'
+      }
+    ]
+  });
 </script>
 ```
 
@@ -139,19 +149,22 @@ All properties are currently optional. That is, you may leave `start` or `end` o
 You can setup overlays to be displayed when particular events are emitted by the player, including your own custom events:
 
 ```js
-player.overlay({
+overlays({
   overlays: [{
 
     // This overlay will appear when a video is playing and disappear when
     // the player is paused.
-    start: 'playing',
-    end: 'pause'
+    id: 'play-info',
+    start: cast.framework.messages.MessageType.PLAY,
+    end: cast.framework.messages.MessageType.PAUSE,
+    align: 'top-left'
   }, {
-
-    // This overlay will appear when the "custom1" event is triggered and
-    // disappear when the "custom2" event is triggered.
-    start: 'custom1',
-    end: 'custom2'
+    // This overlay will appear when a video is pasued and disappear when
+    // the player is playing again.
+    id: 'pause-info',
+    start: cast.framework.messages.MessageType.PAUSE,
+    end: cast.framework.messages.MessageType.PLAY,
+    align: 'top-left'
   }]
 });
 ```
@@ -159,15 +172,16 @@ player.overlay({
 Multiple overlays can be displayed simultaneously. You probably want to specify an alignment for one or more of them so they don't overlap:
 
 ```js
-player.overlay({
+overlays({
   overlays: [{
-
     // This overlay appears at 3 seconds and disappears at 15 seconds.
+    id: 'first-interval',
     start: 3,
-    end: 15
+    end: 15,
+    align: 'top'
   }, {
-
     // This overlay appears at 7 seconds and disappears at 22 seconds.
+    id: 'second-interval',
     start: 7,
     end: 22,
     align: 'bottom'
