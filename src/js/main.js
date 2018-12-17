@@ -39,5 +39,5 @@ export default function overlays(config) {
     chromecastDiv[0].appendChild(overlay.el());
   });
 
-  return;
+  return overlays_;
 }
