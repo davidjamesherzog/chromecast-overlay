@@ -10,6 +10,12 @@ const defaults = {
   overlays: []
 };
 
+/**
+ * Initialize the plugin.
+ *
+ * @function plugin
+ * @param    {Object} [options={}]
+ */
 export default function overlays(config) {
 
   const settings = Object.assign(defaults, config);

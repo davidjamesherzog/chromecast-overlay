@@ -1,5 +1,11 @@
 import {isNumber, hasNoWhitespace} from './utils';
 
+/**
+ * Overlay component.
+ *
+ * @class   Overlay
+ *
+ */
 class Overlay {
 
   constructor(player, options) {
@@ -84,6 +90,11 @@ class Overlay {
 
   }
 
+  /**
+   * Overrides the inherited method to perform some event binding
+   *
+   * @return {Overlay}
+   */
   hide() {
     // need to hide here
     if (this.el_) {
@@ -109,12 +120,26 @@ class Overlay {
     return this;
   }
 
+  /**
+   * Determine whether or not the overlay should hide.
+   *
+   * @param  {number} time
+   *         The current time reported by the player.
+   * @param  {string} type
+   *         An event type.
+   * @return {boolean}
+   */
   shouldHide_(time, type) {
     const end = this.options_.end;
 
     return isNumber(end) ? (time >= end) : end === type;
   }
 
+  /**
+   * Overrides the inherited method to perform some event binding
+   *
+   * @return {Overlay}
+   */
   show() {
     // should show
     this.el_.classList.remove('chromecast-hidden');
@@ -140,6 +165,15 @@ class Overlay {
 
   }
 
+  /**
+   * Determine whether or not the overlay should show.
+   *
+   * @param  {number} time
+   *         The current time reported by the player.
+   * @param  {string} type
+   *         An event type.
+   * @return {boolean}
+   */
   shouldShow_(time, type) {
     const start = this.options_.start;
     const end = this.options_.end;
@@ -166,6 +200,11 @@ class Overlay {
     return start === type;
   }
 
+  /**
+   * Event listener that can trigger the overlay to show.
+   *
+   * @param  {Event} e
+   */
   startListener_(e) {
     // need to get chromecast time
     const time = this.player_.getCurrentTimeSec();
@@ -175,6 +214,11 @@ class Overlay {
     }
   }
 
+  /**
+   * Event listener that can trigger the overlay to show.
+   *
+   * @param  {Event} e
+   */
   endListener_(e) {
     const time = this.player_.getCurrentTimeSec();
 
@@ -183,6 +227,12 @@ class Overlay {
     }
   }
 
+  /**
+   * Event listener that can looks for rewinds - that is, backward seeks
+   * and may hide the overlay as needed.
+   *
+   * @param  {Event} e
+   */
   rewindListener_() {
     const time = this.player_.getCurrentTimeSec();
     const previous = this.previousTime_;

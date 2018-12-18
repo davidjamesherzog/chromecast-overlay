@@ -1,6 +1,7 @@
 node_modules/
 coverage/
 dist/
+docs/
 npm-debug.log
 yarn-error.log
 package-lock.json
