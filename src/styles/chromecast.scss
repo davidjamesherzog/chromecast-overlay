@@ -1,5 +1,4 @@
 .chromecast {
-  $bottom: 3.5em;
   $nudge: 5px;
   $middle: 50%;
   $offset-h: -16.5%;
@@ -45,18 +44,18 @@
   }
 
   .chromecast-overlay-bottom-right {
-    bottom: $bottom;
+    bottom: $nudge;
     right: $nudge;
   }
 
   .chromecast-overlay-bottom {
-    bottom: $bottom;
+    bottom: $nudge;
     left: $middle;
     margin-left: $offset-h;
   }
 
   .chromecast-overlay-bottom-left {
-    bottom: $bottom;
+    bottom: $nudge;
     left: $nudge;
   }
 
