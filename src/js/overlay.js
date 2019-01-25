@@ -101,6 +101,10 @@ class Overlay {
       this.el_.classList.add('chromecast-hidden');
     }
 
+    if (this.hidden) {
+      return this;
+    }
+
     this.debug('hidden');
     this.debug(`bound \`startListener_\` to "${this.startEvent_}"`);
 
@@ -116,6 +120,8 @@ class Overlay {
     }
 
     this.player_.addEventListener(this.startEvent_, this.startListener_.bind(this));
+
+    this.hidden = true;
 
     return this;
   }
@@ -143,6 +149,10 @@ class Overlay {
   show() {
     // should show
     this.el_.classList.remove('chromecast-hidden');
+
+    if (!this.hidden) {
+      return this;
+    }
 
     this.player_.removeEventListener(this.startEvent_, this.startListener_);
     this.debug('shown');
