@@ -1,6 +1,6 @@
 {
   "name": "chromecast-overlay",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "dist/chromecast-overlay.cjs.js",
   "module": "dist/chromecast-overlay.esm.js",
   "browser": "dist/chromecast-overlay.umd.js",
