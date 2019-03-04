@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "main": "dist/chromecast-overlay.cjs.js",
   "module": "dist/chromecast-overlay.esm.js",
-  "browser": "dist/chromecast-overlay.umd.js",
+  "browser": "dist/chromecast-overlay.js",
   "license": "MIT",
   "repository": {
     "type": "git",
