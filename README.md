@@ -14,9 +14,10 @@ Maintenance Status: Stable
   - [Plugin Options](#plugin-options)
     - [`align`](#align)
     - [`showBackground`](#showbackground)
-    - [`attachToControlBar`](#attachtocontrolbar)
     - [`class`](#class)
     - [`content`](#content)
+    - [`id`](#id)
+    - [`debug`](#debug)
     - [`onReady`](#onready)
     - [`onHide`](#onhide)
     - [`onShow`](#onshow)
@@ -31,20 +32,24 @@ Maintenance Status: Stable
 Once you've added the plugin script to your page, you can use it with any video:
 
 ```html
-<script src="path/to/chromecast-overlay.umd.js"></script>
+<script src="path/to/chromecast-overlay.js"></script>
 <script>
   overlays({
     debug: true,
     overlays: [
       {
         id: 'pause-info',
-        start: cast.framework.messages.MessageType.PAUSE,
-        end: cast.framework.messages.MessageType.PLAY,
+        start: cast.framework.events.EventType.PAUSE,
+        end: cast.framework.events.EventType.PLAY,
         align: 'top-left'
       }
     ]
   });
 </script>
+...
+<div id="pause-info">
+  Paused
+</div>
 ```
 
 ## Documentation
@@ -72,19 +77,6 @@ _This setting can be overridden by being set on individual overlay objects._
 
 Whether or not to include background styling & padding around the overlay.
 
-#### `attachToControlBar`
-
-__Type:__ `Boolean`, `String`
-__Default:__ `false`
-
-_This setting can be overridden by being set on individual overlay objects._
-
-If set to `true` or a `string` value, bottom aligned overlays will adjust positioning when the control bar minimizes. This has no effect on overlays that are not aligned to bottom, bottom-left, or bottom-right. For use with the default control bar, it may not work for custom control bars.
-
-The value of `string` must be the name of a ControlBar component.
-
-Bottom aligned overlays will be inserted before the specified component. Otherwise, bottom aligned overlays are inserted before the first child component of the ControlBar. All other overlays are inserted before the ControlBar component.
-
 #### `class`
 
 __Type:__ `String`
@@ -102,6 +94,24 @@ __Default:__ `"This overlay will show up while the video is playing"`
 _This setting can be overridden by being set on individual overlay objects._
 
 The default HTML that the overlay includes.
+
+#### `id`
+
+__Type:__ `String`
+__Default:__ `""`
+
+_This setting can be overridden by being set on individual overlay objects._
+
+The id of HTML element that the overlay includes.
+
+#### `debug`
+
+__Type:__ `Boolean`
+__Default:__ `false`
+
+_This setting can be set when initializing the overlay objects._
+
+Turns on debugging in the console.
 
 #### `onReady`
 
@@ -150,20 +160,21 @@ You can setup overlays to be displayed when particular events are emitted by the
 
 ```js
 overlays({
+  debug: true,
   overlays: [{
 
     // This overlay will appear when a video is playing and disappear when
     // the player is paused.
     id: 'play-info',
-    start: cast.framework.messages.MessageType.PLAY,
-    end: cast.framework.messages.MessageType.PAUSE,
+    start: cast.framework.events.EventType.PLAY,
+    end: cast.framework.events.EventType.PAUSE,
     align: 'top-left'
   }, {
     // This overlay will appear when a video is pasued and disappear when
     // the player is playing again.
     id: 'pause-info',
-    start: cast.framework.messages.MessageType.PAUSE,
-    end: cast.framework.messages.MessageType.PLAY,
+    start: cast.framework.events.EventType.PAUSE,
+    end: cast.framework.events.EventType.PLAY,
     align: 'top-left'
   }]
 });
@@ -173,6 +184,7 @@ Multiple overlays can be displayed simultaneously. You probably want to specify 
 
 ```js
 overlays({
+  debug: true,
   overlays: [{
     // This overlay appears at 3 seconds and disappears at 15 seconds.
     id: 'first-interval',
