@@ -17,9 +17,9 @@ beforeEach(() => {
   });
 });
 
-describe('overlays', () => {
+describe('main', () => {
 
-  test('should be defined', () => {
+  test('should define overlays', () => {
     let overlays_ = overlays({overlays: [{
       id: 'play-info',
       start: cast.framework.events.EventType.PLAY,
