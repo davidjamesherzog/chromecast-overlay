@@ -29,7 +29,7 @@ describe('main', () => {
     expect(overlays_).toBeDefined();
     expect(overlays_.length).toEqual(1);
     expect(Overlay).toHaveBeenCalledTimes(1);
-    expect(Overlay).toBeCalledWith(cast.framework.CastReceiverContext.getInstance().getPlayerManager(), {
+    expect(Overlay).toHaveBeenCalledWith(cast.framework.CastReceiverContext.getInstance().getPlayerManager(), {
       id: 'play-info',
       start: cast.framework.events.EventType.PLAY,
       end: cast.framework.events.EventType.PAUSE,

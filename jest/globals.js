@@ -10,7 +10,8 @@ global.cast = {
     events: {
       EventType: {
         PLAY: 'play',
-        PAUSE: 'pause'
+        PAUSE: 'pause',
+        TIME_UPDATE: 'time_update'
       }
     },
     CastReceiverContext: {
