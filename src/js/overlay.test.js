@@ -40,11 +40,12 @@ describe('overlay', () => {
 
   });
 
-  describe('function', () => {
+  describe('functions', () => {
 
     beforeEach(() => {
       const player = {
-        addEventListener: jest.fn()
+        addEventListener: jest.fn(),
+        getCurrentTimeSec: jest.fn().mockImplementation(() => 50)
       };
       const options = {
         start: 'play'
@@ -125,10 +126,60 @@ describe('overlay', () => {
 
     describe('startListener_', () => {
 
+      beforeEach(() => {
+        jest.spyOn(overlay, 'show').mockImplementation(() => {});
+      });
+
+      test('should call show()', () => {
+        jest.spyOn(overlay, 'shouldShow_').mockImplementation(() => true);
+
+        overlay.startListener_({
+          type: 'play'
+        });
+
+        expect(overlay.shouldShow_).toHaveBeenCalledWith(50, 'play');
+        expect(overlay.show).toHaveBeenCalled();
+      });
+
+      test('should not call show()', () => {
+        jest.spyOn(overlay, 'shouldShow_').mockImplementation(() => false);
+
+        overlay.startListener_({
+          type: 'play'
+        });
+
+        expect(overlay.shouldShow_).toHaveBeenCalledWith(50, 'play');
+        expect(overlay.show).not.toHaveBeenCalled();
+      });
     });
 
     describe('endListener_', () => {
 
+      beforeEach(() => {
+        jest.spyOn(overlay, 'hide').mockImplementation(() => {});
+      });
+
+      test('should call hide()', () => {
+        jest.spyOn(overlay, 'shouldHide_').mockImplementation(() => true);
+
+        overlay.endListener_({
+          type: 'play'
+        });
+
+        expect(overlay.shouldHide_).toHaveBeenCalledWith(50, 'play');
+        expect(overlay.hide).toHaveBeenCalled();
+      });
+
+      test('should not call hide()', () => {
+        jest.spyOn(overlay, 'shouldHide_').mockImplementation(() => false);
+
+        overlay.endListener_({
+          type: 'play'
+        });
+
+        expect(overlay.shouldHide_).toHaveBeenCalledWith(50, 'play');
+        expect(overlay.hide).not.toHaveBeenCalled();
+      });
     });
 
     describe('rewindListener_', () => {
