@@ -184,6 +184,79 @@ describe('overlay', () => {
 
     describe('rewindListener_', () => {
 
+      beforeEach(() => {
+        jest.spyOn(overlay, 'hide').mockImplementation(() => {});
+        jest.spyOn(overlay, 'debug').mockImplementation(() => {});
+        overlay.hasShownSinceSeek_ = true;
+      });
+
+      test('should just set time when seeking forward', () => {
+        overlay.previousTime_ = 30;
+
+        overlay.rewindListener_();
+
+        expect(overlay.previousTime_).toEqual(50);
+        expect(overlay.hasShownSinceSeek_).toBeTruthy();
+        expect(overlay.debug).not.toHaveBeenCalled();
+        expect(overlay.hide).not.toHaveBeenCalled();
+      });
+
+      test('should hide if end is integer and overlay should not show at this time', () => {
+        overlay.previousTime_ = 300;
+        overlay.options_.start = 60;
+        overlay.options_.end = 70;
+        jest.spyOn(overlay, 'shouldShow_').mockImplementation(() => false);
+
+        overlay.rewindListener_();
+
+        expect(overlay.previousTime_).toEqual(50);
+        expect(overlay.hasShownSinceSeek_).toBeFalsy();
+        expect(overlay.debug).toHaveBeenCalledWith('rewind detected');
+        expect(overlay.debug).toHaveBeenCalledWith('hiding; 70 is an integer and overlay should not show at this time');
+        expect(overlay.hide).toHaveBeenCalled();
+      });
+
+      test('should do nothing if tme < previous, end is number and no conditions met', () => {
+        overlay.previousTime_ = 300;
+        overlay.options_.start = 40;
+        overlay.options_.end = 60;
+        jest.spyOn(overlay, 'shouldShow_').mockImplementation(() => true);
+
+        overlay.rewindListener_();
+
+        expect(overlay.previousTime_).toEqual(50);
+        expect(overlay.hasShownSinceSeek_).toBeTruthy();
+        expect(overlay.debug).toHaveBeenCalledWith('rewind detected');
+        expect(overlay.hide).not.toHaveBeenCalled();
+      });
+
+      test('should hide if show point is before now and end point is an event', () => {
+        overlay.previousTime_ = 300;
+        overlay.options_.start = 60;
+        overlay.options_.end = 'pause';
+
+        overlay.rewindListener_();
+
+        expect(overlay.previousTime_).toEqual(50);
+        expect(overlay.hasShownSinceSeek_).toBeFalsy();
+        expect(overlay.debug).toHaveBeenCalledWith('rewind detected');
+        expect(overlay.debug).toHaveBeenCalledWith('hiding; show point (60) is before now (50) and end point (pause) is an event');
+        expect(overlay.hide).toHaveBeenCalled();
+      });
+
+      test('should do nothing if tme < previous, end is an event and no conditions met', () => {
+        overlay.previousTime_ = 300;
+        overlay.options_.start = 40;
+        overlay.options_.end = 'pause';
+
+        overlay.rewindListener_();
+
+        expect(overlay.previousTime_).toEqual(50);
+        expect(overlay.hasShownSinceSeek_).toBeTruthy();
+        expect(overlay.debug).toHaveBeenCalledWith('rewind detected');
+        expect(overlay.hide).not.toHaveBeenCalled();
+      });
+
     });
 
   });
