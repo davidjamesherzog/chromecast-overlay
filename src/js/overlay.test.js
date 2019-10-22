@@ -17,7 +17,7 @@ describe('overlay', () => {
   describe('constructor', () => {
 
     test('should set time update', () => {
-      options.start = cast.framework.events.EventType.TIME_UPDATE;
+      options.start = 1;
       overlay = new Overlay(player, options);
       expect(overlay['startEvent_']).toEqual(cast.framework.events.EventType.TIME_UPDATE);
     });
@@ -29,7 +29,6 @@ describe('overlay', () => {
     });
 
     test('should throw error if no start event', () => {
-      //expect(new Overlay(player, options)).toThrow('invalid "start" option; expected number or string');
       try {
         overlay = new Overlay(player, options);
         expect(true).toBeFalsy();
@@ -233,7 +232,7 @@ describe('overlay', () => {
       test('should hide if show point is before now and end point is an event', () => {
         overlay.previousTime_ = 300;
         overlay.options_.start = 60;
-        overlay.options_.end = 'pause';
+        overlay.options_.end = cast.framework.events.EventType.PAUSE;
 
         overlay.rewindListener_();
 
@@ -247,7 +246,7 @@ describe('overlay', () => {
       test('should do nothing if tme < previous, end is an event and no conditions met', () => {
         overlay.previousTime_ = 300;
         overlay.options_.start = 40;
-        overlay.options_.end = 'pause';
+        overlay.options_.end = cast.framework.events.EventType.PAUSE;
 
         overlay.rewindListener_();
 
