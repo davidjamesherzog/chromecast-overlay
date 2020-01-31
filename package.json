@@ -31,7 +31,7 @@
     "build": "rollup -c",
     "watch": "rollup -c -w",
     "test": "jest",
-    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
+    "test-debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test-watch": "jest --watch",
     "coverage": "jest --collectCoverage=true",
     "clean": "rm -rf ./dist && rm -rf ./coverage && rm -rf ./docs",

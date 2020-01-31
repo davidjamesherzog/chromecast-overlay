@@ -44,6 +44,7 @@ describe('overlay', () => {
     beforeEach(() => {
       const player = {
         addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
         getCurrentTimeSec: jest.fn().mockImplementation(() => 50)
       };
       const options = {
@@ -53,6 +54,93 @@ describe('overlay', () => {
     });
 
     describe('createEl', () => {
+
+      beforeEach(() => {
+        document.appendContent = jest.fn();
+        jest.spyOn(document, 'getElementById').mockImplementation(id => id);
+        jest.spyOn(document, 'createElement').mockImplementation(() => {
+          return {
+            appendChild: jest.fn(),
+            innerHTML: '',
+            appendContent: jest.fn()
+          };
+        });
+
+      });
+
+      test('should set className with background', () => {
+        overlay.options_ = {
+          id: 'test',
+          showBackground: true,
+          align: 'top',
+          class: 'test'
+        };
+        overlay.createEl();
+        expect(overlay.el_.className).toEqual('chromecast-overlay chromecast-overlay-top test chromecast-overlay-background chromecast-hidden');
+      });
+
+      test('should set className with no background', () => {
+        overlay.options_ = {
+          id: 'test',
+          showBackground: false,
+          align: 'top',
+          class: 'test'
+        };
+        overlay.createEl();
+        expect(overlay.el_.className).toEqual('chromecast-overlay chromecast-overlay-top test chromecast-overlay-no-background chromecast-hidden');
+      });
+
+      test('should create el_ based on id', () => {
+        overlay.options_ = {
+          id: 'test'
+        };
+        overlay.createEl();
+        expect(overlay.el_.appendChild).toHaveBeenCalledWith('test');
+        expect(document.getElementById).toHaveBeenCalledWith('test');
+        expect(document.appendContent).not.toHaveBeenCalled();
+        expect(overlay.el_.innerHTML).toEqual('');
+      });
+
+      test('should create el_ based on a string', () => {
+        overlay.options_ = {
+          content: 'test string'
+        };
+        overlay.createEl();
+        expect(overlay.el_.appendChild).not.toHaveBeenCalled();
+        expect(document.appendContent).not.toHaveBeenCalled();
+        expect(overlay.el_.innerHTML).toEqual('test string');
+      });
+
+      test('should create el_ based on a document fragment', () => {
+        overlay.options_ = {
+          content: new DocumentFragment()
+        };
+        overlay.createEl();
+        expect(overlay.el_.appendChild).toHaveBeenCalledWith(overlay.options_.content);
+        expect(document.appendContent).not.toHaveBeenCalled();
+        expect(overlay.el_.innerHTML).toEqual('');
+      });
+
+      test('should create el_ based on content', () => {
+        overlay.options_ = {
+          content: {}
+        };
+        overlay.createEl();
+        expect(overlay.el_.appendChild).not.toHaveBeenCalled();
+        expect(document.appendContent).toHaveBeenCalledWith(overlay.el_, {});
+        expect(overlay.el_.innerHTML).toEqual('');
+      });
+
+      test('should call onReady function', () => {
+        overlay.options_ = {
+          id: 'test',
+          onReady: jest.fn()
+        };
+        overlay.createEl();
+        expect(overlay.el_.appendChild).toHaveBeenCalledWith('test');
+        expect(document.getElementById).toHaveBeenCalledWith('test');
+        expect(overlay.options_.onReady).toHaveBeenCalled();
+      });
 
     });
 
@@ -88,6 +176,38 @@ describe('overlay', () => {
 
     describe('hide', () => {
 
+      beforeEach(() => {
+        jest.spyOn(overlay, 'debug').mockImplementation(() => {});
+        overlay.el_ = {
+          classList: {
+            add: jest.fn()
+          }
+        };
+        overlay.startEvent_ = 'pause';
+        overlay.hidden = false;
+      });
+
+      test('should add class and event listener', () => {
+        overlay.endEvent_ = 'play';
+        overlay.hide();
+        expect(overlay.el_.classList.add).toHaveBeenCalledWith('chromecast-hidden');
+        expect(overlay.debug).toHaveBeenCalledWith('hidden');
+        expect(overlay.debug).toHaveBeenCalledWith('bound `startListener_` to "pause"');
+        expect(overlay.player_.addEventListener).toHaveBeenCalledWith(overlay.startEvent_, expect.any(Function));
+      });
+
+      test('should remove event listener', () => {
+        overlay.endEvent_ = 'play';
+        overlay.hide();
+        expect(overlay.debug).toHaveBeenCalledWith('unbound `endListener_` from "play"');
+        expect(overlay.player_.removeEventListener).toHaveBeenCalledWith(overlay.endEvent_, overlay.endListenerBound_);
+      });
+
+      test('should call onHide', () => {
+        overlay.options_.onHide = jest.fn();
+        overlay.hide();
+        expect(overlay.options_.onHide).toHaveBeenCalled();
+      });
 
     });
 
@@ -117,10 +237,98 @@ describe('overlay', () => {
 
     describe('show', () => {
 
+      beforeEach(() => {
+        jest.spyOn(overlay, 'debug').mockImplementation(() => {});
+        overlay.el_ = {
+          classList: {
+            remove: jest.fn()
+          }
+        };
+        overlay.startEvent_ = 'pause';
+      });
+
+      test('should remove class and event listener', () => {
+        overlay.show();
+        expect(overlay.el_.classList.remove).toHaveBeenCalledWith('chromecast-hidden');
+        expect(overlay.player_.removeEventListener).toHaveBeenCalledWith(overlay.startEvent_, overlay.startListenerBound_);
+        expect(overlay.debug).toHaveBeenCalledWith('shown');
+        expect(overlay.debug).toHaveBeenCalledWith('unbound `startListener_` from "pause"');
+      });
+
+      test('should add event listener', () => {
+        overlay.endEvent_ = 'play';
+        overlay.show();
+        expect(overlay.debug).toHaveBeenCalledWith('bound `endListener_` to "play"');
+        expect(overlay.player_.addEventListener).toHaveBeenCalledWith(overlay.endEvent_, expect.any(Function));
+      });
+
+      test('should call onShow', () => {
+        overlay.options_.onShow = jest.fn();
+        overlay.show();
+        expect(overlay.options_.onShow).toHaveBeenCalled();
+      });
+
     });
 
     describe('shouldShow_', () => {
 
+      test('should return true if event is same as start', () => {
+        overlay.options_.start = 'play';
+        expect(overlay.shouldShow_(40, 'play')).toBeTruthy();
+      });
+
+      test('should return false if event is different than start', () => {
+        overlay.options_.start = 'play';
+        expect(overlay.shouldShow_(40, 'pause')).toBeFalsy();
+      });
+
+      test('should return false if time is less than start', () => {
+        overlay.options_.start = 30;
+        overlay.options_.end = 40;
+        expect(overlay.shouldShow_(20, 'time_update')).toBeFalsy();
+      });
+
+      test('should return true if time is between start and end', () => {
+        overlay.options_.start = 30;
+        overlay.options_.end = 40;
+        expect(overlay.shouldShow_(35, 'time_update')).toBeTruthy();
+      });
+
+      test('should return false if time is greater than end', () => {
+        overlay.options_.start = 30;
+        overlay.options_.end = 40;
+        expect(overlay.shouldShow_(20, 'time_update')).toBeFalsy();
+      });
+
+      test('should return false if time is less than start with an end event', () => {
+        overlay.options_.start = 30;
+        overlay.options_.end = 'pause';
+        overlay.hasShownSinceSeek_ = false;
+        expect(overlay.shouldShow_(20, 'time_update')).toBeFalsy();
+        expect(overlay.hasShownSinceSeek_).toBeTruthy();
+      });
+
+      test('should return true if time is greater than start with an end event', () => {
+        overlay.options_.start = 30;
+        overlay.options_.end = 'pause';
+        overlay.hasShownSinceSeek_ = false;
+        expect(overlay.shouldShow_(50, 'time_update')).toBeTruthy();
+        expect(overlay.hasShownSinceSeek_).toBeTruthy();
+      });
+
+      test('should return true if it has shown since last seek and time is equal to start', () => {
+        overlay.options_.start = 30;
+        overlay.options_.end = 'pause';
+        overlay.hasShownSinceSeek_ = true;
+        expect(overlay.shouldShow_(30, 'time_update')).toBeTruthy();
+      });
+
+      test('should return false if it has shown since last seek and time is not equal to start', () => {
+        overlay.options_.start = 30;
+        overlay.options_.end = 'pause';
+        overlay.hasShownSinceSeek_ = true;
+        expect(overlay.shouldShow_(40, 'time_update')).toBeFalsy();
+      });
     });
 
     describe('startListener_', () => {

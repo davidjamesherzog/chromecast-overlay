@@ -101,17 +101,13 @@ class Overlay {
       this.el_.classList.add('chromecast-hidden');
     }
 
-    if (this.hidden) {
-      return this;
-    }
-
     this.debug('hidden');
     this.debug(`bound \`startListener_\` to "${this.startEvent_}"`);
 
     // Overlays without an "end" are valid.
     if (this.endEvent_) {
       this.debug(`unbound \`endListener_\` from "${this.endEvent_}"`);
-      this.player_.removeEventListener(this.endEvent_, this.endListener_);
+      this.player_.removeEventListener(this.endEvent_, this.endListenerBound_);
     }
 
     // Call callback function when overlay is hidden
@@ -119,9 +115,8 @@ class Overlay {
       this.options_.onHide();
     }
 
-    this.player_.addEventListener(this.startEvent_, this.startListener_.bind(this));
-
-    this.hidden = true;
+    this.startListenerBound_ = this.startListener_.bind(this);
+    this.player_.addEventListener(this.startEvent_, this.startListenerBound_);
 
     return this;
   }
@@ -150,26 +145,21 @@ class Overlay {
     // should show
     this.el_.classList.remove('chromecast-hidden');
 
-    if (!this.hidden) {
-      return this;
-    }
-
-    this.player_.removeEventListener(this.startEvent_, this.startListener_);
+    this.player_.removeEventListener(this.startEvent_, this.startListenerBound_);
     this.debug('shown');
     this.debug(`unbound \`startListener_\` from "${this.startEvent_}"`);
 
     // Overlays without an "end" are valid.
     if (this.endEvent_) {
       this.debug(`bound \`endListener_\` to "${this.endEvent_}"`);
-      this.player_.addEventListener(this.endEvent_, this.endListener_.bind(this));
+      this.endListenerBound_ = this.endListener_.bind(this);
+      this.player_.addEventListener(this.endEvent_, this.endListenerBound_);
     }
 
     // Call callback function when overlay is shown
     if (typeof this.options_.onShow === 'function') {
       this.options_.onShow();
     }
-
-    this.hidden = false;
 
     return this;
 

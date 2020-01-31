@@ -12,7 +12,7 @@ beforeEach(() => {
         {
           appendChild: jest.fn()
         }
-      ]
+      ];
     }
   });
 });
