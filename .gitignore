@@ -4,6 +4,5 @@ dist/
 docs/
 npm-debug.log
 yarn-error.log
-package-lock.json
 __snapshots__/
 *.iml
