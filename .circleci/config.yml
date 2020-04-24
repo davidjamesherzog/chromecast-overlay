@@ -11,8 +11,6 @@ jobs:
           steps:
             - run: npm install
             - run: npm run coverage
-      - store_test_results:
-          path: ~/coverage/clover.xml
 workflows:
     build-and-test:
       jobs:
